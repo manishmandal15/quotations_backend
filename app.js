@@ -20,6 +20,24 @@ const numCPUs = os.cpus().length;
 // -------------------------------------------------
 app.set("trust proxy", 1);
 
+// -------------------------------------------------
+// ✅ CORS OPTIONS — single source of truth
+// -------------------------------------------------
+const corsOptions = {
+  origin: [
+    "http://localhost:5173",
+    "https://quotation-frontend-pi.vercel.app",
+  ],
+  credentials: true,
+  methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization"],
+};
+
+// -------------------------------------------------
+// ✅ PREFLIGHT — must be BEFORE helmet & rate limiter
+// -------------------------------------------------
+app.options("*", cors(corsOptions));
+
 // ----------------------------
 // SECURITY & GLOBAL MIDDLEWARE
 // ----------------------------
@@ -29,12 +47,7 @@ app.use(
   })
 );
 
-app.use(
-  cors({
-    origin: "http://localhost:5173",
-    credentials: true,
-  })
-);
+app.use(cors(corsOptions));
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -196,4 +209,3 @@ if (cluster.isPrimary) {
     server.close(() => process.exit(0));
   });
 }
-
