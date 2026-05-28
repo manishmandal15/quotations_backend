@@ -1,13 +1,164 @@
+// const db = require("../config/db");
+// const bcrypt = require("bcrypt"); // password hashing
+
+// // ✅ Get all users
+// exports.getAllUsers = (req, res) => {
+//   const query = `
+//     SELECT 
+//       u.id,
+//       u.role_id,
+//       u.name AS name,
+//       r.name AS rolename,
+//       u.phone,
+//       u.is_active,
+//       DATE_FORMAT(u.created_at, '%d-%b-%Y %H:%i') AS created_at,
+//       DATE_FORMAT(u.updated_at, '%d-%b-%Y %H:%i') AS updated_at,
+//       u.email
+//     FROM users AS u
+//     INNER JOIN roles AS r ON r.id = u.role_id
+//   `;
+
+//   db.query(query, (err, results) => {
+//     if (err) return res.status(500).json({ error: "Server error" });
+//     res.json(results);
+//   });
+// };
+
+// // ✅ Get single user by ID
+// exports.getUserById = (req, res) => {
+//   const { id } = req.params;
+
+//   db.query("SELECT id, role_id, name, email, phone, is_active FROM users WHERE id = ?", [id], (err, results) => {
+//     if (err) return res.status(500).json({ error: "Server error" });
+//     if (results.length === 0) return res.status(404).json({ error: "User not found" });
+//     res.json(results[0]);
+//   });
+// };
+
+// // ✅ Create new user
+// exports.createUser = async (req, res) => {
+//   const { role_id, name, email, password, phone, is_active } = req.body;
+
+//   if (!name || !email || !password) {
+//     return res.status(400).json({ error: "Name, email, and password are required" });
+//   }
+
+//   const active = is_active ? 1 : 0;
+
+//   // Check for duplicate email
+//   db.query("SELECT * FROM users WHERE email = ?", [email], async (err, results) => {
+//     if (err) return res.status(500).json({ error: "Server error" });
+//     if (results.length > 0) return res.status(409).json({ error: "Email already exists" });
+
+//     // Hash password
+//     const hashedPassword = await bcrypt.hash(password, 10);
+
+//     // Insert new user
+//     const insertQuery = `
+//       INSERT INTO users (role_id, name, email, password, phone, is_active)
+//       VALUES (?, ?, ?, ?, ?, ?)
+//     `;
+
+//     db.query(insertQuery, [role_id, name, email, hashedPassword, phone, active], (err, result) => {
+//       if (err) return res.status(500).json({ error: "Server error" });
+
+//       res.status(201).json({
+//         id: result.insertId,
+//         role_id,
+//         name,
+//         email,
+//         phone,
+//         is_active: active,
+//       });
+//     });
+//   });
+// };
+
+// // ✅ Update existing user
+// exports.updateUser = async (req, res) => {
+//   const { id } = req.params;
+//   const { role_id, name, email, password, phone, is_active } = req.body;
+
+//   if (!name || !email) {
+//     return res.status(400).json({ error: "Name and email are required" });
+//   }
+
+//   const active = is_active ? 1 : 0;
+
+//   // Check duplicate email excluding current user
+//   db.query("SELECT * FROM users WHERE email = ? AND id <> ?", [email, id], async (err, results) => {
+//     if (err) return res.status(500).json({ error: "Server error" });
+//     if (results.length > 0) return res.status(409).json({ error: "Email already exists" });
+
+//     // Conditional password update
+//     let updateQuery = `UPDATE users SET role_id = ?, name = ?, email = ?, phone = ?, is_active = ?`;
+//     let params = [role_id, name, email, phone, active];
+
+//     if (password) {
+//       const hashedPassword = await bcrypt.hash(password, 10);
+//       updateQuery += `, password = ?`;
+//       params.push(hashedPassword);
+//     }
+
+//     updateQuery += ` WHERE id = ?`;
+//     params.push(id);
+
+//     db.query(updateQuery, params, (err, result) => {
+//       if (err) return res.status(500).json({ error: "Server error" });
+//       if (result.affectedRows === 0) return res.status(404).json({ error: "User not found" });
+
+//       res.json({
+//         id: Number(id),
+//         role_id,
+//         name,
+//         email,
+//         phone,
+//         is_active: active,
+//       });
+//     });
+//   });
+// };
+
+// // ✅ Delete user
+// exports.deleteUser = (req, res) => {
+//   const { id } = req.params;
+
+//   db.query("DELETE FROM users WHERE id = ?", [id], (err, result) => {
+//     if (err) return res.status(500).json({ error: "Server error" });
+//     if (result.affectedRows === 0) return res.status(404).json({ error: "User not found" });
+
+//     res.json({ message: "User deleted successfully" });
+//   });
+// };
+
+//uper wala code bycrypt password ka h isme password save hone pe database me encryp hoke dikhta h
+
+
+
+
+
+
 const db = require("../config/db");
 
 // ✅ Get all users
 exports.getAllUsers = (req, res) => {
   const query = `
- SELECT   u.id,   u.role_id,  u.name AS name,  r.name AS rolename,  u.phone,  u.is_active,  DATE_FORMAT(u.created_at, '%d-%b-%Y %H:%i') AS created_at,  DATE_FORMAT(u.updated_at, '%d-%b-%Y %H:%i') AS updated_at,  u.email,u.password FROM users AS u INNER JOIN roles AS r ON r.id = u.role_id 
+    SELECT 
+      u.id,
+      u.role_id,
+      u.name AS name,
+      r.name AS rolename,
+      u.phone,
+      u.is_active,
+      DATE_FORMAT(u.created_at, '%d-%b-%Y %H:%i') AS created_at,
+      DATE_FORMAT(u.updated_at, '%d-%b-%Y %H:%i') AS updated_at,
+      u.email
+    FROM users AS u
+    INNER JOIN roles AS r ON r.id = u.role_id
   `;
 
   db.query(query, (err, results) => {
-    if (err) return res.status(500).json({ error: err.message });
+    if (err) return res.status(500).json({ error: "Server error" });
     res.json(results);
   });
 };
@@ -16,15 +167,20 @@ exports.getAllUsers = (req, res) => {
 exports.getUserById = (req, res) => {
   const { id } = req.params;
 
-  db.query("SELECT * FROM users WHERE id = ?", [id], (err, results) => {
-    if (err) return res.status(500).json({ error: err.message });
-    if (results.length === 0)
-      return res.status(404).json({ error: "User not found" });
-    res.json(results[0]);
-  });
+  db.query(
+    "SELECT id, role_id, name, email, phone, is_active FROM users WHERE id = ?",
+    [id],
+    (err, results) => {
+      if (err) return res.status(500).json({ error: "Server error" });
+      if (results.length === 0)
+        return res.status(404).json({ error: "User not found" });
+
+      res.json(results[0]);
+    }
+  );
 };
 
-// ✅ Create new user
+// ✅ Create new user (PLAIN PASSWORD)
 exports.createUser = (req, res) => {
   const { role_id, name, email, password, phone, is_active } = req.body;
 
@@ -36,39 +192,42 @@ exports.createUser = (req, res) => {
 
   const active = is_active ? 1 : 0;
 
-  // Check for duplicate email
-  db.query("SELECT * FROM users WHERE email = ?", [email], (err, results) => {
-    if (err) return res.status(500).json({ error: err.message });
-    if (results.length > 0)
-      return res.status(409).json({ error: "Email already exists" });
+  // Check duplicate email
+  db.query(
+    "SELECT id FROM users WHERE email = ?",
+    [email],
+    (err, results) => {
+      if (err) return res.status(500).json({ error: "Server error" });
+      if (results.length > 0)
+        return res.status(409).json({ error: "Email already exists" });
 
-    // Insert new user
-    const insertQuery = `
-      INSERT INTO users (role_id, name, email, password, phone, is_active)
-      VALUES (?, ?, ?, ?, ?, ?)
-    `;
+      // 👉 PASSWORD DIRECT SAVE
+      const insertQuery = `
+        INSERT INTO users (role_id, name, email, password, phone, is_active)
+        VALUES (?, ?, ?, ?, ?, ?)
+      `;
 
-    db.query(
-      insertQuery,
-      [role_id, name, email, password, phone, active],
-      (err, result) => {
-        if (err) return res.status(500).json({ error: err.message });
+      db.query(
+        insertQuery,
+        [role_id, name, email, password, phone, active],
+        (err, result) => {
+          if (err) return res.status(500).json({ error: "Server error" });
 
-        res.status(201).json({
-          id: result.insertId,
-          role_id,
-          name,
-          email,
-          password,
-          phone,
-          is_active: active,
-        });
-      }
-    );
-  });
+          res.status(201).json({
+            id: result.insertId,
+            role_id,
+            name,
+            email,
+            phone,
+            is_active: active,
+          });
+        }
+      );
+    }
+  );
 };
 
-// ✅ Update existing user
+// ✅ Update existing user (PLAIN PASSWORD)
 exports.updateUser = (req, res) => {
   const { id } = req.params;
   const { role_id, name, email, password, phone, is_active } = req.body;
@@ -79,40 +238,44 @@ exports.updateUser = (req, res) => {
 
   const active = is_active ? 1 : 0;
 
-  // Check duplicate email excluding current user
+  // Check duplicate email (except current user)
   db.query(
-    "SELECT * FROM users WHERE email = ? AND id <> ?",
+    "SELECT id FROM users WHERE email = ? AND id <> ?",
     [email, id],
     (err, results) => {
-      if (err) return res.status(500).json({ error: err.message });
+      if (err) return res.status(500).json({ error: "Server error" });
       if (results.length > 0)
         return res.status(409).json({ error: "Email already exists" });
 
-      const updateQuery = `
-        UPDATE users 
-        SET role_id = ?, name = ?, email = ?, password = ?, phone = ?, is_active = ? 
-        WHERE id = ?
+      let updateQuery = `
+        UPDATE users
+        SET role_id = ?, name = ?, email = ?, phone = ?, is_active = ?
       `;
+      let params = [role_id, name, email, phone, active];
 
-      db.query(
-        updateQuery,
-        [role_id, name, email, password, phone, active, id],
-        (err, result) => {
-          if (err) return res.status(500).json({ error: err.message });
-          if (result.affectedRows === 0)
-            return res.status(404).json({ error: "User not found" });
+      // 👉 Password update only if provided
+      if (password) {
+        updateQuery += `, password = ?`;
+        params.push(password); // DIRECT SAVE
+      }
 
-          res.json({
-            id: Number(id),
-            role_id,
-            name,
-            email,
-            password,
-            phone,
-            is_active: active,
-          });
-        }
-      );
+      updateQuery += ` WHERE id = ?`;
+      params.push(id);
+
+      db.query(updateQuery, params, (err, result) => {
+        if (err) return res.status(500).json({ error: "Server error" });
+        if (result.affectedRows === 0)
+          return res.status(404).json({ error: "User not found" });
+
+        res.json({
+          id: Number(id),
+          role_id,
+          name,
+          email,
+          phone,
+          is_active: active,
+        });
+      });
     }
   );
 };
@@ -122,7 +285,7 @@ exports.deleteUser = (req, res) => {
   const { id } = req.params;
 
   db.query("DELETE FROM users WHERE id = ?", [id], (err, result) => {
-    if (err) return res.status(500).json({ error: err.message });
+    if (err) return res.status(500).json({ error: "Server error" });
     if (result.affectedRows === 0)
       return res.status(404).json({ error: "User not found" });
 
