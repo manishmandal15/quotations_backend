@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const QuotationItemController = require("../controllers/QuotationItemController");
+const QuotationItemController = require("../controllers/quotationItemController");
 const controller = new QuotationItemController();
 
 router.get("/", controller.getAll.bind(controller));
