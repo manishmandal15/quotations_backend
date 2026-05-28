@@ -10,7 +10,7 @@ const os = require("os");
 const http = require("http");
 
 dotenv.config();
-
+//  say hii
 const app = express();
 const PORT = process.env.PORT || 5003;
 const numCPUs = os.cpus().length;
@@ -19,22 +19,6 @@ const numCPUs = os.cpus().length;
 // ✅ TRUST PROXY (REQUIRED for VPS / Nginx / cPanel)
 // -------------------------------------------------
 app.set("trust proxy", 1);
-
-// -------------------------------------------------
-// ✅ CORS OPTIONS
-// -------------------------------------------------
-const corsOptions = {
-  origin: [
-    "http://localhost:5173",
-    "https://quotation-frontend-pi.vercel.app",
-  ],
-  credentials: true,
-  methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
-  allowedHeaders: ["Content-Type", "Authorization"],
-};
-
-// ✅ PREFLIGHT — helmet se pehle hona ZAROORI hai
-app.options("*", cors(corsOptions));
 
 // ----------------------------
 // SECURITY & GLOBAL MIDDLEWARE
@@ -45,7 +29,12 @@ app.use(
   })
 );
 
-app.use(cors(corsOptions));
+app.use(
+  cors({
+    origin: "http://localhost:5173",
+    credentials: true,
+  })
+);
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -207,3 +196,4 @@ if (cluster.isPrimary) {
     server.close(() => process.exit(0));
   });
 }
+
