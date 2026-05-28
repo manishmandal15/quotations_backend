@@ -21,7 +21,7 @@ const numCPUs = os.cpus().length;
 app.set("trust proxy", 1);
 
 // -------------------------------------------------
-// ✅ CORS OPTIONS — single source of truth
+// ✅ CORS OPTIONS
 // -------------------------------------------------
 const corsOptions = {
   origin: [
@@ -33,9 +33,7 @@ const corsOptions = {
   allowedHeaders: ["Content-Type", "Authorization"],
 };
 
-// -------------------------------------------------
-// ✅ PREFLIGHT — must be BEFORE helmet & rate limiter
-// -------------------------------------------------
+// ✅ PREFLIGHT — helmet se pehle hona ZAROORI hai
 app.options("*", cors(corsOptions));
 
 // ----------------------------
