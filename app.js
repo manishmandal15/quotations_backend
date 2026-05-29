@@ -10,7 +10,7 @@ const os = require("os");
 const http = require("http");
 
 dotenv.config();
-//  say hii
+
 const app = express();
 const PORT = process.env.PORT || 5003;
 const numCPUs = os.cpus().length;
